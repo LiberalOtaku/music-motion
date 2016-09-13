@@ -3,7 +3,7 @@
 // Last Updated: 13 September 2016
 //
 // A PC rhythm game developed with OpenGL where you move a controller (e.g. mouse) in time with the music.
-// The game may support additional peripherals
+// The game may support additional peripherals for the purposes of music making or conducting.
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -14,7 +14,7 @@ struct GLintPoint {
   int x, y;
 };
 
-const int windowWidth = 1280, windowHeight = 720;
+const int WINDOW_WIDTH = 1280, WINDOW_HEIGHT = 720;
 
 void myInit(void) {
   glClearColor(0.8, 0.8, 0.8, 0.0); // set light gray background color
@@ -22,7 +22,7 @@ void myInit(void) {
   glPointSize(4.0); // a ‘dot’ is 4 by 4 pixels
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluOrtho2D(0.0, static_cast<double>(windowWidth), 0.0, static_cast<double>(windowHeight));
+  gluOrtho2D(0.0, (double)WINDOW_WIDTH, 0.0, (double)WINDOW_HEIGHT);
 }
 
 void myDisplay(void) {
@@ -34,7 +34,7 @@ void myDisplay(void) {
 void myMovedMouse(int x, int y) {
   static GLintPoint currentPosition;
   currentPosition.x = x;
-  currentPosition.y = windowHeight - y;
+  currentPosition.y = WINDOW_HEIGHT - y;
 
   glClear(GL_COLOR_BUFFER_BIT); // clear the screen
 
@@ -49,7 +49,7 @@ void myMovedMouse(int x, int y) {
 int main(int argc, char** argv) {
   glutInit(&argc, argv); // initialize the Open-GL toolkit
   glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB); // set the display mode
-  glutInitWindowSize(windowWidth, windowHeight); // set window size
+  glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT); // set window size
   glutInitWindowPosition(43, 24); // centered for 1366 x 768 monitors
   glutCreateWindow("Music Motion"); // open the screen window
 
