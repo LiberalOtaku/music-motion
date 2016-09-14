@@ -11,7 +11,7 @@ A PC game developed as an Earlham College senior research project in collaborati
 As of now, the program can simply be compiled with the following command.
 
 ```shell
-$ gcc -Wall -ggdb music-motion.cpp -o music-motion -lGL -lglut -lGLU
+$ gcc -Wall -ggdb music-motion.cpp -o music-motion -lm -lGL -lglut -lGLU
 ```
 
-Make sure you are in the same directory as the `music-motion.cpp` source file.
+Make sure you are in the same directory as the `music-motion.cpp` source file and that the OpenGL libraries are installed on your computer.

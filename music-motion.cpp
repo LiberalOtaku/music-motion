@@ -5,10 +5,14 @@
 // A PC rhythm game developed with OpenGL where you move a controller (e.g. mouse) in time with the music.
 // The game may support additional peripherals for the purposes of music making or conducting.
 
+// OpenGL Libraries
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
 #include <GL/glui.h>
+
+// C++ Libraries
+#include <cmath>
 
 struct GLintPoint {
   int x, y;
@@ -17,6 +21,15 @@ struct GLintPoint {
 // global variables
 GLintPoint currentPosition;
 const int WINDOW_WIDTH = 1280, WINDOW_HEIGHT = 720;
+
+void drawDiamond(GLintPoint center, int radius) {
+  glBegin(GL_LINE_LOOP);
+  glVertex2i(center.x + radius, center.y);
+  glVertex2i(center.x, center.y - radius);
+  glVertex2i(center.x - radius, center.y);
+  glVertex2i(center.x, center.y + radius);
+  glEnd();
+}
 
 void myInit() {
   glClearColor(0.8, 0.8, 0.8, 0.0); // set light gray background color
@@ -36,6 +49,8 @@ void myDisplay() {
   glVertex2i(currentPosition.x, currentPosition.y);
   glEnd();
 
+  drawDiamond(currentPosition, 20);
+
   glutSwapBuffers();
 }
 
@@ -51,7 +66,7 @@ int main(int argc, char** argv) {
   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE); // set the display mode
   glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT); // set window size
   glutInitWindowPosition(43, 24); // centered for 1366 x 768 monitors
-  glutCreateWindow("Music Motion"); // open the screen window
+  glutCreateWindow("Music Motion Demo"); // open the screen window
 
   // register the callback functions
   glutDisplayFunc(myDisplay);
