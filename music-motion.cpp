@@ -14,9 +14,11 @@ struct GLintPoint {
   int x, y;
 };
 
+// global variables
+GLintPoint currentPosition;
 const int WINDOW_WIDTH = 1280, WINDOW_HEIGHT = 720;
 
-void myInit(void) {
+void myInit() {
   glClearColor(0.8, 0.8, 0.8, 0.0); // set light gray background color
   glColor3f(0.2f, 0.2f, 0.8f); // set the drawing color
   glPointSize(4.0); // a ‘dot’ is 4 by 4 pixels
@@ -25,30 +27,28 @@ void myInit(void) {
   gluOrtho2D(0.0, (double)WINDOW_WIDTH, 0.0, (double)WINDOW_HEIGHT);
 }
 
-void myDisplay(void) {
+void myDisplay() {
   glClear(GL_COLOR_BUFFER_BIT); // clear the screen
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
 
-  glFlush(); // send all output to display
-}
-
-void myMovedMouse(int x, int y) {
-  static GLintPoint currentPosition;
-  currentPosition.x = x;
-  currentPosition.y = WINDOW_HEIGHT - y;
-
-  glClear(GL_COLOR_BUFFER_BIT); // clear the screen
-
-  // do something at current mouse position
   glBegin(GL_POINTS);
   glVertex2i(currentPosition.x, currentPosition.y);
   glEnd();
 
-  glFlush();
+  glutSwapBuffers();
+}
+
+void myMovedMouse(int x, int y) {
+  currentPosition.x = x;
+  currentPosition.y = WINDOW_HEIGHT - y;
+
+  glutPostRedisplay();
 }
 
 int main(int argc, char** argv) {
   glutInit(&argc, argv); // initialize the Open-GL toolkit
-  glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB); // set the display mode
+  glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE); // set the display mode
   glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT); // set window size
   glutInitWindowPosition(43, 24); // centered for 1366 x 768 monitors
   glutCreateWindow("Music Motion"); // open the screen window
