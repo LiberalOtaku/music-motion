@@ -22,12 +22,17 @@ struct GLintPoint {
 GLintPoint currentPosition;
 const int WINDOW_WIDTH = 1280, WINDOW_HEIGHT = 720;
 
-void drawDiamond(GLintPoint center, int radius) {
+void ngon(int n, GLintPoint center, double radius, double rotAngle) {
+  if (n < 3) return; // bad number of sides
+
+  double angle = rotAngle * M_PI / 180.0; // initial angle
+  double angleInc = 2.0 * M_PI / n; // angle increment
+
   glBegin(GL_LINE_LOOP);
-  glVertex2i(center.x + radius, center.y);
-  glVertex2i(center.x, center.y - radius);
-  glVertex2i(center.x - radius, center.y);
-  glVertex2i(center.x, center.y + radius);
+  for (int i = 0; i < n; i++) {
+    angle += angleInc;
+    glVertex2d(radius * cos(angle) + (double)center.x, radius * sin(angle) + (double)center.y);
+  }
   glEnd();
 }
 
@@ -49,7 +54,8 @@ void myDisplay() {
   glVertex2i(currentPosition.x, currentPosition.y);
   glEnd();
 
-  drawDiamond(currentPosition, 20);
+  // draw a circle around the mouse
+  ngon(30, currentPosition, 24.0, 0.0);
 
   glutSwapBuffers();
 }
