@@ -1,6 +1,6 @@
 // File: music-motion.cpp
 // Author: Edward Ly
-// Last Updated: 13 September 2016
+// Last Updated: 16 September 2016
 //
 // A PC rhythm game developed with OpenGL where you move a controller (e.g. mouse) in time with the music.
 // The game may support additional peripherals for the purposes of music making or conducting.
@@ -18,6 +18,11 @@ struct GLintPoint {
   int x, y;
 };
 
+struct Window {
+  int left, right, bottom, top;
+  int width, height;
+};
+
 // global variables
 GLintPoint currentPosition;
 const int WINDOW_WIDTH = 1280, WINDOW_HEIGHT = 720;
@@ -30,16 +35,81 @@ void ngon(int n, GLintPoint center, double radius, double rotAngle) {
 
   glBegin(GL_LINE_LOOP);
   for (int i = 0; i < n; i++) {
-    angle += angleInc;
     glVertex2d(radius * cos(angle) + (double)center.x, radius * sin(angle) + (double)center.y);
+    angle += angleInc;
   }
   glEnd();
 }
 
-void myInit() {
-  glClearColor(0.8, 0.8, 0.8, 0.0); // set light gray background color
+void drawRoom() {
+  glColor3f(0.7f, 0.7f, 0.7f); // set the drawing color
+
+  Window backWall;
+  backWall.right = WINDOW_WIDTH * 4 / 5;
+  backWall.left = WINDOW_WIDTH * 1 / 5;
+  backWall.top = WINDOW_HEIGHT * 4 / 5;
+  backWall.bottom = WINDOW_HEIGHT * 1 / 5;
+  backWall.width = backWall.right - backWall.left;
+  backWall.height = backWall.top - backWall.bottom;
+
+  int horizontalSpace = (WINDOW_WIDTH - backWall.width) / 2;
+  int verticalSpace = (WINDOW_HEIGHT - backWall.height) / 2;
+
+  for (int i = 0; i < 4; i++) {
+    glBegin(GL_LINE_LOOP);
+    glVertex2i(backWall.right + (i * horizontalSpace / 4), backWall.top + (i * verticalSpace / 4));
+    glVertex2i(backWall.left - (i * horizontalSpace / 4),  backWall.top + (i * verticalSpace / 4));
+    glVertex2i(backWall.left - (i * horizontalSpace / 4),  backWall.bottom - (i * verticalSpace / 4));
+    glVertex2i(backWall.right + (i * horizontalSpace / 4), backWall.bottom - (i * verticalSpace / 4));
+    glEnd();
+  }
+
+  glBegin(GL_LINES);
+  glVertex2i(backWall.right, backWall.top);
+  glVertex2i(WINDOW_WIDTH, WINDOW_HEIGHT);
+
+  glVertex2i(backWall.left, backWall.top);
+  glVertex2i(0, WINDOW_HEIGHT);
+
+  glVertex2i(backWall.left, backWall.bottom);
+  glVertex2i(0, 0);
+
+  glVertex2i(backWall.right, backWall.bottom);
+  glVertex2i(WINDOW_WIDTH, 0);
+  glEnd();
+
+  for (int i = 1; i < 9; i++) {
+    glBegin(GL_LINE_STRIP);
+    glVertex2i(WINDOW_WIDTH * i / 9, 0);
+    glVertex2i(backWall.width * i / 9 + backWall.left, backWall.bottom);
+    glVertex2i(backWall.width * i / 9 + backWall.left, backWall.top);
+    glVertex2i(WINDOW_WIDTH * i / 9, WINDOW_HEIGHT);
+    glEnd();
+  }
+
+  for (int i = 1; i < 4; i++) {
+    glBegin(GL_LINE_STRIP);
+    glVertex2i(0, WINDOW_HEIGHT * i / 4);
+    glVertex2i(backWall.left, backWall.height * i / 4 + backWall.bottom);
+    glVertex2i(backWall.right, backWall.height * i / 4 + backWall.bottom);
+    glVertex2i(WINDOW_WIDTH, WINDOW_HEIGHT * i / 4);
+    glEnd();
+  }
+}
+
+void drawCursor() {
   glColor3f(0.2f, 0.2f, 0.8f); // set the drawing color
-  glPointSize(4.0); // a ‘dot’ is 4 by 4 pixels
+  glBegin(GL_POINTS);
+  glVertex2i(currentPosition.x, currentPosition.y);
+  glEnd();
+
+  // draw a circle around the mouse
+  ngon(30, currentPosition, 24.0, 0.0);
+}
+
+void myInit() {
+  glClearColor(0.9, 0.9, 0.9, 0.0); // set light gray background color
+  glPointSize(3.0); // a ‘dot’ is 3 by 3 pixels
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   gluOrtho2D(0.0, (double)WINDOW_WIDTH, 0.0, (double)WINDOW_HEIGHT);
@@ -50,12 +120,8 @@ void myDisplay() {
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
-  glBegin(GL_POINTS);
-  glVertex2i(currentPosition.x, currentPosition.y);
-  glEnd();
-
-  // draw a circle around the mouse
-  ngon(30, currentPosition, 24.0, 0.0);
+  drawRoom();
+  drawCursor();
 
   glutSwapBuffers();
 }
