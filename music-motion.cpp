@@ -1,8 +1,8 @@
 // File: music-motion.cpp
 // Author: Edward Ly
-// Last Updated: 16 September 2016
+// Last Updated: 26 September 2016
 //
-// A PC rhythm game developed with OpenGL where you move a controller (e.g. mouse) in time with the music.
+// A PC application developed with OpenGL where you move a controller (e.g. mouse) in time with the music.
 // The game may support additional peripherals for the purposes of music making or conducting.
 
 // OpenGL Libraries
@@ -11,10 +11,12 @@
 #include <GL/glut.h>
 #include <GL/glui.h>
 
-// PortAudio Libraries
+// PortAudio Library
 #include "portaudio.h"
 
-// C++ Libraries
+// C/C++ Libraries
+// #include <fstream>
+// #include <iostream>
 #include <cmath>
 
 // global variables for PortAudio
@@ -47,7 +49,7 @@ static int patestCallback( const void *inputBuffer, void *outputBuffer,
     (void) timeInfo; /* Prevent unused variable warnings. */
     (void) statusFlags;
     (void) inputBuffer;
-    
+
     for( i=0; i<framesPerBuffer; i++ )
     {
         *out++ = data->sine[data->left_phase];  /* left */
@@ -57,7 +59,7 @@ static int patestCallback( const void *inputBuffer, void *outputBuffer,
         data->right_phase += 3; /* higher pitch so we can distinguish left and right. */
         if( data->right_phase >= TABLE_SIZE ) data->right_phase -= TABLE_SIZE;
     }
-    
+
     return paContinue;
 }
 
@@ -218,29 +220,29 @@ int main(int argc, char** argv) {
   // glutMouseFunc(myMouse);
   glutPassiveMotionFunc(myMovedMouse);
   // glutKeyboardFunc(myKeyboard);
-  
+
   // from sample program paex_sine.c
-  
+
   // initialize PortAudio
-  // PaStreamParameters outputParameters;
-  // PaStream *stream;
+  PaStreamParameters outputParameters;
+  PaStream *stream;
   PaError err;
   paTestData data;
   int i;
-  
-    // printf("PortAudio Test: output sine wave. SR = %d, BufSize = %d\n", SAMPLE_RATE, FRAMES_PER_BUFFER);
-    
+
+    printf("PortAudio Test: output sine wave. SR = %d, BufSize = %d\n", SAMPLE_RATE, FRAMES_PER_BUFFER);
+
     // initialise sinusoidal wavetable
     for( i=0; i<TABLE_SIZE; i++ )
     {
         data.sine[i] = (float) sin( ((double)i/(double)TABLE_SIZE) * M_PI * 2. );
     }
     data.left_phase = data.right_phase = 0;
-    
+
   err = Pa_Initialize();
   if (err != paNoError) return error(err);
 
-  /* outputParameters.device = Pa_GetDefaultOutputDevice(); // default output device
+  outputParameters.device = Pa_GetDefaultOutputDevice(); // default output device
   if (outputParameters.device == paNoDevice) {
     fprintf(stderr,"Error: No default output device.\n");
     error(err);
@@ -275,11 +277,11 @@ int main(int argc, char** argv) {
   if( err != paNoError ) return error(err);
 
   err = Pa_CloseStream( stream );
-  if( err != paNoError ) return error(err); */
+  if( err != paNoError ) return error(err);
 
   myInit(); // additional OpenGL initializations as necessary
   glutMainLoop(); // go into a perpetual loop
-  
+
   Pa_Terminate();
   return err;
 }
